@@ -44,13 +44,15 @@ class FindJob():
                     summ = job.find_elements_by_class_name("summary")[0]
                     summ.click()
                     sleep(1)
-                    try:
-                        job_desc = job.find_element_by_xpath('/html/body/div[1]/div[1]/div/div/div/div[1]/div/div[3]/div[2]/div[4]/div/p[2]').text
+                    """ try:
+                        whole_job = self.driver.find_element_by_xpath('/html/body/div[1]/div[1]/div/div/div/div[1]')
+                        job_desc = whole_job.find_element_by_xpath('/html/body/div[1]/div[1]/div/div/div/div[1]/div/div[3]/div[2]/div[2]')
+                        print(job_desc)
                     except NoSuchElementException:
-                        job_desc = 'None'
+                        job_desc = 'None' """
 
                     dataframe = dataframe.append(
-                        {'Title': title, 'Location': location, 'Employer': employer, 'Description': job_desc}, ignore_index=True)
+                        {'Title': title, 'Location': location, 'Employer': employer}, ignore_index=True)
             except:
                 pop_up = self.driver.find_element_by_xpath(
                     '/html/body/div[4]/div[1]/button')
