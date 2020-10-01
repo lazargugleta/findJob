@@ -2,15 +2,18 @@ from selenium import webdriver
 import pandas as pd
 from time import sleep
 from bs4 import BeautifulSoup
+from selenium.common.exceptions import NoSuchElementException
 
 
 class FindJob():
     def __init__(self):
-        self.driver = webdriver.Chrome()
+        options = webdriver.ChromeOptions()
+        options.add_argument("--start-maximized")
+        self.driver = webdriver.Chrome(chrome_options=options)
         dataframe = pd.DataFrame(
             columns=["Title", "Location", "Company", "Salary", "Description"])
         # self.driver.minimize_window()
-        for cnt in range(0, 50, 10):
+        for cnt in range(0, 30, 10):
             self.driver.get(
                 "https://www.indeed.com/jobs?q=data+science&l=United+States&start=" + str(cnt))
 
@@ -41,13 +44,16 @@ class FindJob():
                     summ = job.find_elements_by_class_name("summary")[0]
                     summ.click()
                     sleep(1)
-                    job_desc = self.driver.find_element_by_id('vjs-desc').text
+                    try:
+                        job_desc = job.find_element_by_xpath('/html/body/div[1]/div[1]/div/div/div/div[1]/div/div[3]/div[2]/div[4]/div/p[2]').text
+                    except NoSuchElementException:
+                        job_desc = 'None'
 
                     dataframe = dataframe.append(
                         {'Title': title, 'Location': location, 'Employer': employer, 'Description': job_desc}, ignore_index=True)
             except:
                 pop_up = self.driver.find_element_by_xpath(
-                    '/html/body/table[2]/tbody/tr/td/div[2]/div[2]/div[4]/div[3]/div[2]/a')
+                    '/html/body/div[4]/div[1]/button')
                 pop_up.click()
             dataframe.to_csv("jobs.csv", index=False)
 
